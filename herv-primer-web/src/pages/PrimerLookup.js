@@ -4,10 +4,10 @@ import {
   getPrimersReverse,
 } from "../api/primers";
 
-export default function PrimerLookup() {
-  const [mode, setMode] = useState("forward"); 
-  // forward | reverse
+import PrimerSetCard from "../components/PrimerSetCard";
 
+export default function PrimerLookup() {
+  const [mode, setMode] = useState("forward");
   const [sequence, setSequence] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
@@ -95,7 +95,6 @@ export default function PrimerLookup() {
         </button>
       </div>
 
-      {/* STATES */}
       {loading && (
         <p className="text-gray-500">Searching primer relationships...</p>
       )}
@@ -105,101 +104,13 @@ export default function PrimerLookup() {
       )}
 
       {/* RESULTS */}
+      {/* RESULTS */}
       <div className="space-y-6 mt-6">
-
         {results.map((r) => (
-          <div
-            key={r.set_index}
-            className="border rounded p-4 bg-white"
-          >
-
-            {/* HEADER */}
-            <div className="flex justify-between">
-              <h2 className="font-semibold">
-                {r.family_name} / {r.subgroup_name} / {r.component_name}
-              </h2>
-
-              <span className="text-sm text-gray-500">
-                Set #{r.set_index}
-              </span>
-            </div>
-
-            {/* BIDIRECTIONAL DISPLAY */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-
-              {/* FORWARD */}
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                  Forward primers
-                </h3>
-
-                {r.forward_primers?.length > 0 ? (
-                  <ul className="space-y-1 text-sm font-mono">
-                    {r.forward_primers.map((p, i) => (
-                      <li
-                        key={i}
-                        className="bg-gray-50 p-2 rounded border"
-                      >
-                        <div className="text-xs text-gray-500">
-                          {p.name}
-                        </div>
-                        <div className="break-all">
-                          {p.sequence}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-400 text-sm">None</p>
-                )}
-              </div>
-
-              {/* REVERSE */}
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                  Reverse primers
-                </h3>
-
-                {r.reverse_primers?.length > 0 ? (
-                  <ul className="space-y-1 text-sm font-mono">
-                    {r.reverse_primers.map((p, i) => (
-                      <li
-                        key={i}
-                        className="bg-gray-50 p-2 rounded border"
-                      >
-                        <div className="text-xs text-gray-500">
-                          {p.name}
-                        </div>
-                        <div className="break-all">
-                          {p.sequence}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-400 text-sm">None</p>
-                )}
-              </div>
-            </div>
-
-            {/* REFERENCES */}
-            {r.references?.length > 0 && (
-              <div className="mt-4 text-sm text-gray-600">
-                <strong>References:</strong>{" "}
-                {r.references.map((ref, i) => (
-                  <span key={i}>
-                    {ref.title} ({ref.year})
-                    {i < r.references.length - 1 ? ", " : ""}
-                  </span>
-                ))}
-              </div>
-            )}
-
-          </div>
+          <PrimerSetCard key={r.set_index} r={r} />
         ))}
       </div>
 
-      {/* EMPTY STATE */}
       {!loading && results.length === 0 && sequence && (
         <p className="text-gray-400 mt-6">
           No matches found for this sequence.
