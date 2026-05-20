@@ -18,3 +18,4 @@ export const getPrimersReverse = async (seq) => {
   });
   return res.data;
 };
+

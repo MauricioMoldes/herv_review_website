@@ -1,6 +1,6 @@
 import { safeParsePrimerList } from "../utils/parsePrimers";
 
-export default function PrimerSetCard({ r }) {
+export default function PrimerSetCard({ r, queryPrimer }) {
   return (
     <div className="border rounded p-4 bg-white">
 
@@ -14,6 +14,21 @@ export default function PrimerSetCard({ r }) {
           Set #{r.set_index}
         </span>
       </div>
+
+      {/* QUERY CONTEXT (ONLY FOR LOOKUP MODE) */}
+      {queryPrimer && (
+        <div className="mt-3 mb-4 bg-blue-50 border border-blue-200 rounded p-3">
+
+          <div className="text-xs text-blue-700 font-medium mb-1">
+            Query primer ({queryPrimer.type})
+          </div>
+
+          <div className="font-mono text-sm break-all text-blue-900">
+            {queryPrimer.sequence}
+          </div>
+
+        </div>
+      )}
 
       {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -61,20 +76,53 @@ export default function PrimerSetCard({ r }) {
             <p className="text-gray-400 text-sm">None</p>
           )}
         </div>
+
       </div>
 
       {/* REFERENCES */}
       {safeParsePrimerList(r.references).length > 0 && (
-        <div className="mt-4 text-sm text-gray-600">
-          <strong>References:</strong>{" "}
-          {safeParsePrimerList(r.references).map((ref, i) => (
-            <span key={i}>
-              {ref.title} ({ref.year})
-              {i < safeParsePrimerList(r.references).length - 1 ? ", " : ""}
-            </span>
-          ))}
+        <div className="mt-5 border-t pt-4">
+
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+            References
+          </h3>
+
+          <div className="space-y-3">
+            {safeParsePrimerList(r.references).map((ref, i) => (
+              <div
+                key={i}
+                className="bg-gray-50 border rounded p-3 text-sm"
+              >
+
+                <div className="font-medium text-gray-800 leading-snug">
+                  {ref.title}
+                </div>
+
+                <div className="mt-1 flex flex-wrap gap-3 text-xs text-gray-500">
+
+                  {ref.year && (
+                    <span>Year: {ref.year}</span>
+                  )}
+
+                  {ref.doi && (
+                    <a
+                      href={`https://doi.org/${ref.doi}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-700 hover:underline"
+                    >
+                      DOI: {ref.doi}
+                    </a>
+                  )}
+
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       )}
+
     </div>
   );
 }

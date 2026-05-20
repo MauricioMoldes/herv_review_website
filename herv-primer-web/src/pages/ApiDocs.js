@@ -1,23 +1,42 @@
 export default function ApiDocs() {
   return (
-    <div className="max-w-4xl mx-auto p-10">
+    <div className="max-w-5xl mx-auto p-10">
 
       <h1 className="text-2xl font-semibold mb-3">
         API Documentation
       </h1>
 
-      <p className="text-gray-600 mb-6">
-        FastAPI backend provides programmatic access to primer sets,
-        sequence lookup, loci, and statistics.
+      <p className="text-gray-600 mb-6 leading-relaxed">
+        The DNAtabase API provides programmatic access to curated HERV primer
+        assays, sequence-based lookup, genomic loci, and dataset statistics.
+        The API is implemented in FastAPI and returns JSON responses.
       </p>
 
-      {/* MAIN LINKS CARD */}
-      <div className="border rounded p-4 bg-white space-y-3">
+      {/* MAIN LINKS */}
+      <div className="border rounded p-5 bg-white space-y-5">
 
         <div>
-          <h2 className="font-semibold">Interactive Swagger UI</h2>
+          <h2 className="font-semibold text-gray-800">
+            API Endpoint
+          </h2>
+
           <a
-            className="text-blue-600 hover:underline"
+            className="text-blue-700 hover:underline break-all"
+            href="http://10.62.55.108:8001"
+            target="_blank"
+            rel="noreferrer"
+          >
+            http://10.62.55.108:8001
+          </a>
+        </div>
+
+        <div>
+          <h2 className="font-semibold text-gray-800">
+            Interactive Swagger UI
+          </h2>
+
+          <a
+            className="text-blue-700 hover:underline break-all"
             href="http://10.62.55.108:8001/docs"
             target="_blank"
             rel="noreferrer"
@@ -27,9 +46,12 @@ export default function ApiDocs() {
         </div>
 
         <div>
-          <h2 className="font-semibold">OpenAPI JSON</h2>
+          <h2 className="font-semibold text-gray-800">
+            OpenAPI Specification
+          </h2>
+
           <a
-            className="text-blue-600 hover:underline"
+            className="text-blue-700 hover:underline break-all"
             href="http://10.62.55.108:8001/openapi.json"
             target="_blank"
             rel="noreferrer"
@@ -40,33 +62,123 @@ export default function ApiDocs() {
 
       </div>
 
-      {/* QUICK ENDPOINT SUMMARY */}
-      <div className="mt-8 space-y-3">
+      {/* EXAMPLES */}
+      <div className="mt-10">
 
-        <h2 className="text-lg font-semibold">Endpoints</h2>
+        <h2 className="text-xl font-semibold mb-5">
+          Example Queries
+        </h2>
 
-        <ul className="text-sm text-gray-700 space-y-2">
+        <div className="space-y-6">
 
-          <li><code>/families</code> — list HERV families</li>
+          {/* SEARCH */}
+          <div className="border rounded bg-white p-5">
+            <h3 className="font-semibold text-blue-900 mb-2">
+              Search primer sets by family
+            </h3>
 
-          <li><code>/primer_sets</code> — filtered primer sets</li>
+            <a
+              href="http://10.62.55.108:8001/primers?family=HERV-K"
+              target="_blank"
+              rel="noreferrer"
+              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+            >
+              http://10.62.55.108:8001/primers?family=HERV-K
+            </a>
 
-          <li><code>/primers</code> — unified forward/reverse query</li>
+            <p className="text-sm text-gray-600 mt-2">
+              Returns all curated primer sets associated with the HERV-K family.
+            </p>
+          </div>
 
-          <li><code>/primers_forward</code> — forward sequence lookup</li>
+          {/* COMPONENT */}
+          <div className="border rounded bg-white p-5">
+            <h3 className="font-semibold text-blue-900 mb-2">
+              Search by family and component
+            </h3>
 
-          <li><code>/primers_reverse</code> — reverse sequence lookup</li>
+            <a
+              href="http://10.62.55.108:8001/primers?family=HERV-K&component=env"
+              target="_blank"
+              rel="noreferrer"
+              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+            >
+              http://10.62.55.108:8001/primers?family=HERV-K&component=env
+            </a>
 
-          <li><code>/primer_loci</code> — genomic coordinates</li>
+            <p className="text-sm text-gray-600 mt-2">
+              Filters primer sets targeting the env component of HERV-K/HML-2.
+            </p>
+          </div>
 
-          <li><code>/primer_stats</code> — dataset statistics</li>
+          {/* FORWARD LOOKUP */}
+          <div className="border rounded bg-white p-5">
+            <h3 className="font-semibold text-blue-900 mb-2">
+              Forward → Reverse primer lookup
+            </h3>
 
-        </ul>
+            <a
+              href="http://10.62.55.108:8001/primers_forward?forward_seq=AGCAGGTCAGGTGCCTGTAACATT"
+              target="_blank"
+              rel="noreferrer"
+              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+            >
+              http://10.62.55.108:8001/primers_forward?forward_seq=AGCAGGTCAGGTGCCTGTAACATT
+            </a>
+
+            <p className="text-sm text-gray-600 mt-2">
+              Resolves matching reverse primers and associated references for a
+              forward primer sequence.
+            </p>
+          </div>
+
+          {/* REVERSE LOOKUP */}
+          <div className="border rounded bg-white p-5">
+            <h3 className="font-semibold text-blue-900 mb-2">
+              Reverse → Forward primer lookup
+            </h3>
+
+            <a
+              href="http://10.62.55.108:8001/primers_reverse?reverse_seq=GCAGCCCTATTTCTTCGGACC"
+              target="_blank"
+              rel="noreferrer"
+              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+            >
+              http://10.62.55.108:8001/primers_reverse?reverse_seq=GCAGCCCTATTTCTTCGGACC
+            </a>
+
+            <p className="text-sm text-gray-600 mt-2">
+              Resolves matching forward primers linked to a reverse primer sequence.
+            </p>
+          </div>
+
+          {/* STATS */}
+          <div className="border rounded bg-white p-5">
+            <h3 className="font-semibold text-blue-900 mb-2">
+              Dataset statistics
+            </h3>
+
+            <a
+              href="http://10.62.55.108:8001/primer_stats"
+              target="_blank"
+              rel="noreferrer"
+              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+            >
+              http://10.62.55.108:8001/primer_stats
+            </a>
+
+            <p className="text-sm text-gray-600 mt-2">
+              Returns aggregate statistics across curated primer assays and loci.
+            </p>
+          </div>
+
+        </div>
       </div>
 
-      {/* SMALL NOTE */}
-      <div className="mt-8 text-xs text-gray-400">
-        Tip: Use the Swagger UI for live testing and schema inspection.
+      {/* FOOTNOTE */}
+      <div className="mt-10 text-xs text-gray-400">
+        All endpoints return JSON responses. Additional schema information and
+        live endpoint testing are available through the Swagger UI.
       </div>
 
     </div>
