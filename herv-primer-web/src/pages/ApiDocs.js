@@ -1,3 +1,5 @@
+import { API_BASE } from "../config";
+
 export default function ApiDocs() {
   return (
     <div className="max-w-5xl mx-auto p-10">
@@ -16,47 +18,32 @@ export default function ApiDocs() {
       <div className="border rounded p-5 bg-white space-y-5">
 
         <div>
-          <h2 className="font-semibold text-gray-800">
-            API Endpoint
-          </h2>
-
-          <a
-            className="text-blue-700 hover:underline break-all"
-            href="http://10.62.55.108:8001"
-            target="_blank"
-            rel="noreferrer"
-          >
-            http://10.62.55.108:8001
+          <h2 className="font-semibold text-gray-800">API Endpoint</h2>
+          <a className="text-blue-700 hover:underline break-all"
+             href={API_BASE}
+             target="_blank"
+             rel="noreferrer">
+            {API_BASE}
           </a>
         </div>
 
         <div>
-          <h2 className="font-semibold text-gray-800">
-            Interactive Swagger UI
-          </h2>
-
-          <a
-            className="text-blue-700 hover:underline break-all"
-            href="http://10.62.55.108:8001/docs"
-            target="_blank"
-            rel="noreferrer"
-          >
-            http://10.62.55.108:8001/docs
+          <h2 className="font-semibold text-gray-800">Interactive Swagger UI</h2>
+          <a className="text-blue-700 hover:underline break-all"
+             href={`${API_BASE}/docs`}
+             target="_blank"
+             rel="noreferrer">
+            {API_BASE}/docs
           </a>
         </div>
 
         <div>
-          <h2 className="font-semibold text-gray-800">
-            OpenAPI Specification
-          </h2>
-
-          <a
-            className="text-blue-700 hover:underline break-all"
-            href="http://10.62.55.108:8001/openapi.json"
-            target="_blank"
-            rel="noreferrer"
-          >
-            http://10.62.55.108:8001/openapi.json
+          <h2 className="font-semibold text-gray-800">OpenAPI Specification</h2>
+          <a className="text-blue-700 hover:underline break-all"
+             href={`${API_BASE}/openapi.json`}
+             target="_blank"
+             rel="noreferrer">
+            {API_BASE}/openapi.json
           </a>
         </div>
 
@@ -78,17 +65,13 @@ export default function ApiDocs() {
             </h3>
 
             <a
-              href="http://10.62.55.108:8001/primers?family=HERV-K"
+              href={`${API_BASE}/primers?family=HERV-K`}
               target="_blank"
               rel="noreferrer"
-              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+              className="block bg-gray-100 p-3 rounded text-sm text-blue-700 hover:underline"
             >
-              http://10.62.55.108:8001/primers?family=HERV-K
+              {API_BASE}/primers?family=HERV-K
             </a>
-
-            <p className="text-sm text-gray-600 mt-2">
-              Returns all curated primer sets associated with the HERV-K family.
-            </p>
           </div>
 
           {/* COMPONENT */}
@@ -98,58 +81,45 @@ export default function ApiDocs() {
             </h3>
 
             <a
-              href="http://10.62.55.108:8001/primers?family=HERV-K&component=env"
+              href={`${API_BASE}/primers?family=HERV-K&component=env`}
               target="_blank"
               rel="noreferrer"
-              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+              className="block bg-gray-100 p-3 rounded text-sm text-blue-700 hover:underline"
             >
-              http://10.62.55.108:8001/primers?family=HERV-K&component=env
+              {API_BASE}/primers?family=HERV-K&component=env
             </a>
-
-            <p className="text-sm text-gray-600 mt-2">
-              Filters primer sets targeting the env component of HERV-K/HML-2.
-            </p>
           </div>
 
-          {/* FORWARD LOOKUP */}
+          {/* FORWARD */}
           <div className="border rounded bg-white p-5">
             <h3 className="font-semibold text-blue-900 mb-2">
               Forward → Reverse primer lookup
             </h3>
 
             <a
-              href="http://10.62.55.108:8001/primers_forward?forward_seq=AGCAGGTCAGGTGCCTGTAACATT"
+              href={`${API_BASE}/primers_forward?forward_seq=AGCAGGTCAGGTGCCTGTAACATT`}
               target="_blank"
               rel="noreferrer"
-              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+              className="block bg-gray-100 p-3 rounded text-sm text-blue-700 hover:underline"
             >
-              http://10.62.55.108:8001/primers_forward?forward_seq=AGCAGGTCAGGTGCCTGTAACATT
+              {API_BASE}/primers_forward?forward_seq=AGCAGGTCAGGTGCCTGTAACATT
             </a>
-
-            <p className="text-sm text-gray-600 mt-2">
-              Resolves matching reverse primers and associated references for a
-              forward primer sequence.
-            </p>
           </div>
 
-          {/* REVERSE LOOKUP */}
+          {/* REVERSE */}
           <div className="border rounded bg-white p-5">
             <h3 className="font-semibold text-blue-900 mb-2">
               Reverse → Forward primer lookup
             </h3>
 
             <a
-              href="http://10.62.55.108:8001/primers_reverse?reverse_seq=GCAGCCCTATTTCTTCGGACC"
+              href={`${API_BASE}/primers_reverse?reverse_seq=GCAGCCCTATTTCTTCGGACC`}
               target="_blank"
               rel="noreferrer"
-              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+              className="block bg-gray-100 p-3 rounded text-sm text-blue-700 hover:underline"
             >
-              http://10.62.55.108:8001/primers_reverse?reverse_seq=GCAGCCCTATTTCTTCGGACC
+              {API_BASE}/primers_reverse?reverse_seq=GCAGCCCTATTTCTTCGGACC
             </a>
-
-            <p className="text-sm text-gray-600 mt-2">
-              Resolves matching forward primers linked to a reverse primer sequence.
-            </p>
           </div>
 
           {/* STATS */}
@@ -159,26 +129,20 @@ export default function ApiDocs() {
             </h3>
 
             <a
-              href="http://10.62.55.108:8001/primer_stats"
+              href={`${API_BASE}/primer_stats`}
               target="_blank"
               rel="noreferrer"
-              className="block bg-gray-100 p-3 rounded text-sm overflow-x-auto text-blue-700 hover:underline"
+              className="block bg-gray-100 p-3 rounded text-sm text-blue-700 hover:underline"
             >
-              http://10.62.55.108:8001/primer_stats
+              {API_BASE}/primer_stats
             </a>
-
-            <p className="text-sm text-gray-600 mt-2">
-              Returns aggregate statistics across curated primer assays and loci.
-            </p>
           </div>
 
         </div>
       </div>
 
-      {/* FOOTNOTE */}
       <div className="mt-10 text-xs text-gray-400">
-        All endpoints return JSON responses. Additional schema information and
-        live endpoint testing are available through the Swagger UI.
+        All endpoints return JSON responses. Live testing is available via Swagger UI.
       </div>
 
     </div>
