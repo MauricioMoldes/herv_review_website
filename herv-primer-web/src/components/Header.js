@@ -1,12 +1,28 @@
 import { Link, useLocation } from "react-router-dom";
 
+// Remembers the last visited URL for stateful pages so navigating back restores results.
+let lastSearchUrl = "/search";
+let lastLookupUrl = "/lookup";
+
 const NavLink = ({ to, children }) => {
   const location = useLocation();
+
+  if (location.pathname === "/search") {
+    lastSearchUrl = location.pathname + location.search;
+  }
+  if (location.pathname === "/lookup") {
+    lastLookupUrl = location.pathname + location.search;
+  }
+
+  const href =
+    to === "/search" ? lastSearchUrl :
+    to === "/lookup" ? lastLookupUrl :
+    to;
   const active = location.pathname === to;
 
   return (
     <Link
-      to={to}
+      to={href}
       className={`hover:text-blue-700 transition ${
         active ? "text-blue-700 font-medium" : "text-gray-700"
       }`}
@@ -24,10 +40,10 @@ const Header = () => {
         {/* LOGO */}
         <div className="flex items-center gap-2 mr-6">
           <img
-                src="https://upload.wikimedia.org/wikipedia/commons/3/37/Rigshospitalet_logo.svg"
-                alt="Rigshospitalet"
-                className="h-10"
-                />
+            src="https://upload.wikimedia.org/wikipedia/commons/3/37/Rigshospitalet_logo.svg"
+            alt="Rigshospitalet"
+            className="h-10"
+          />
         </div>
 
         {/* PRIMARY NAV */}
@@ -37,10 +53,10 @@ const Header = () => {
           <NavLink to="/lookup">Primer Lookup</NavLink>
           <NavLink to="/loci">Loci</NavLink>
           <NavLink to="/api">API</NavLink>
-          <NavLink to="/stats">Stats</NavLink>         
+          <NavLink to="/stats">Stats</NavLink>
         </nav>
 
-        {/* RIGHT SIDE (push) */}
+        {/* RIGHT SIDE */}
         <div className="ml-auto flex gap-4 text-gray-500">
           <NavLink to="/about">About</NavLink>
           <NavLink to="/terms">Terms</NavLink>

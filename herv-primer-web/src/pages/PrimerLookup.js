@@ -1,37 +1,67 @@
-import { useState } from "react";
-import {
-  getPrimersForward,
-  getPrimersReverse,
-} from "../api/primers";
-
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { getPrimersForward, getPrimersReverse } from "../api/primers";
 import PrimerSetCard from "../components/PrimerSetCard";
 
+// Module-level cache — survives navigation, keyed by serialized search params
+const lookupCache = new Map();
+
 export default function PrimerLookup() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [mode, setMode] = useState("forward");
   const [sequence, setSequence] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
 
-  const handleSearch = async () => {
-    if (!sequence.trim()) return;
+  // Sync state from URL and fetch on mount / URL change
+  useEffect(() => {
+    const urlMode = searchParams.get("mode") || "forward";
+    const urlSeq  = searchParams.get("sequence") || "";
 
-    setLoading(true);
-    setError(null);
-    setResults([]);
+    setMode(urlMode);
+    setSequence(urlSeq);
 
-    try {
-      const data =
-        mode === "forward"
-          ? await getPrimersForward(sequence)
-          : await getPrimersReverse(sequence);
-
-      setResults(data);
-    } catch (err) {
-      setError("Lookup failed. Check sequence or API connection.");
-    } finally {
-      setLoading(false);
+    if (!urlSeq.trim()) {
+      setResults([]);
+      return;
     }
+
+    const cacheKey = searchParams.toString();
+
+    if (lookupCache.has(cacheKey)) {
+      setResults(lookupCache.get(cacheKey));
+      return;
+    }
+
+    let isActive = true;
+
+    (async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data =
+          urlMode === "forward"
+            ? await getPrimersForward(urlSeq)
+            : await getPrimersReverse(urlSeq);
+
+        lookupCache.set(cacheKey, data);
+        if (isActive) setResults(data);
+      } catch (err) {
+        if (isActive) setError("Lookup failed. Check sequence or API connection.");
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    })();
+
+    return () => { isActive = false; };
+  }, [searchParams.toString()]);
+
+  const handleSearch = () => {
+    if (!sequence.trim()) return;
+    setSearchParams({ mode, sequence: sequence.trim().toUpperCase() });
   };
 
   return (
@@ -42,7 +72,6 @@ export default function PrimerLookup() {
         <h1 className="text-3xl font-semibold text-blue-900">
           Primer Pair Lookup
         </h1>
-
         <p className="mt-2 text-gray-600 max-w-3xl">
           Resolve forward ↔ reverse primer relationships using exact sequence matching.
         </p>
@@ -79,14 +108,15 @@ export default function PrimerLookup() {
         {/* INPUT */}
         <div className="flex gap-3">
           <input
-            className="flex-1 border rounded-lg p-3 font-mono text-sm"
+            className="flex-1 border rounded-lg p-3 font-mono text-sm uppercase placeholder:normal-case"
             placeholder={
               mode === "forward"
                 ? "Paste forward primer sequence..."
                 : "Paste reverse primer sequence..."
             }
             value={sequence}
-            onChange={(e) => setSequence(e.target.value)}
+            onChange={(e) => setSequence(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
 
           <button
@@ -100,16 +130,8 @@ export default function PrimerLookup() {
 
       {/* STATUS */}
       <div className="mt-6">
-        {loading && (
-          <p className="text-gray-500">
-            Searching primer relationships...
-          </p>
-        )}
-
-        {error && (
-          <p className="text-red-600">{error}</p>
-        )}
-
+        {loading && <p className="text-gray-500">Searching primer relationships...</p>}
+        {error && <p className="text-red-600">{error}</p>}
         {!loading && results.length > 0 && (
           <p className="text-sm text-gray-500">
             {results.length} match{results.length !== 1 ? "es" : ""} found
@@ -123,10 +145,7 @@ export default function PrimerLookup() {
           <PrimerSetCard
             key={r.set_index}
             r={r}
-            queryPrimer={{
-              type: mode,
-              sequence: sequence
-            }}
+            queryPrimer={{ type: mode, sequence }}
           />
         ))}
       </div>

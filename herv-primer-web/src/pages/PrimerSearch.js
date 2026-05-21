@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getPrimers } from "../api/primers";
+import { primerCache } from "../api/primerCache";
 import PrimerSetCard from "../components/PrimerSetCard";
 
 export default function PrimerSearch() {
@@ -15,71 +16,61 @@ export default function PrimerSearch() {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
 
-  // ✅ ALWAYS derive query from URL
-  const getQueryFromURL = () => ({
-    family: searchParams.get("family") || "",
-    subgroup: searchParams.get("subgroup") || "",
-    component: searchParams.get("component") || "",
-    dna: searchParams.get("dna") === "true",
-  });
-
   useEffect(() => {
-  const params = Object.fromEntries(searchParams.entries());
+    const params = Object.fromEntries(searchParams.entries());
 
-  const q = {
-    family: params.family || "",
-    subgroup: params.subgroup || "",
-    component: params.component || "",
-    dna: params.dna === "true",
-  };
-
-  setFamily(q.family);
-  setSubgroup(q.subgroup);
-  setComponent(q.component);
-  setDna(q.dna);
-
-  const hasQuery = q.family || q.subgroup || q.component || q.dna;
-
-  if (!hasQuery) {
-    setResults([]);
-    return;
-  }
-
-  let isActive = true;
-
-  (async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await getPrimers(q);
-
-      if (isActive) {
-        setResults(data);
-      }
-    } catch (e) {
-      if (isActive) {
-        setError("Failed to fetch primers");
-      }
-    } finally {
-      if (isActive) {
-        setLoading(false);
-      }
-    }
-  })();
-
-  return () => {
-    isActive = false;
-  };
-}, [searchParams.toString()]);
- 
- 
- 
- const handleSearch = async () => {
     const q = {
-      family: family.trim(),
-      subgroup: subgroup.trim(),
-      component: component.trim(),
+      family: params.family || "",
+      subgroup: params.subgroup || "",
+      component: params.component || "",
+      dna: params.dna === "true",
+    };
+
+    setFamily(q.family);
+    setSubgroup(q.subgroup);
+    setComponent(q.component);
+    setDna(q.dna);
+
+    const hasQuery = q.family || q.subgroup || q.component || q.dna;
+
+    if (!hasQuery) {
+      setResults([]);
+      return;
+    }
+
+    const cacheKey = searchParams.toString();
+
+    // Return cached results immediately — no flash, no loading spinner
+    if (primerCache.has(cacheKey)) {
+      setResults(primerCache.get(cacheKey));
+      return;
+    }
+
+    let isActive = true;
+
+    (async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await getPrimers(q);
+        primerCache.set(cacheKey, data);
+        if (isActive) setResults(data);
+      } catch (e) {
+        if (isActive) setError("Failed to fetch primers");
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    })();
+
+    return () => { isActive = false; };
+  }, [searchParams.toString()]);
+
+  const handleSearch = () => {
+    const q = {
+      family: family.trim().toUpperCase(),
+      subgroup: subgroup.trim().toUpperCase(),
+      component: component.trim().toLowerCase(),
       dna,
     };
 
@@ -98,7 +89,6 @@ export default function PrimerSearch() {
         <h1 className="text-3xl font-semibold text-blue-900">
           Primer Search
         </h1>
-
         <p className="mt-2 text-gray-600 max-w-3xl">
           Query curated HERV primer assays by family, subgroup,
           genomic component, and assay type.
@@ -111,24 +101,24 @@ export default function PrimerSearch() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
           <input
-            className="w-full border rounded-lg p-3"
+            className="w-full border rounded-lg p-3 uppercase placeholder:normal-case"
             placeholder="Family (e.g. HERV-K)"
             value={family}
-            onChange={(e) => setFamily(e.target.value)}
+            onChange={(e) => setFamily(e.target.value.toUpperCase())}
           />
 
           <input
-            className="w-full border rounded-lg p-3"
+            className="w-full border rounded-lg p-3 uppercase placeholder:normal-case"
             placeholder="Subgroup (e.g. HML-2)"
             value={subgroup}
-            onChange={(e) => setSubgroup(e.target.value)}
+            onChange={(e) => setSubgroup(e.target.value.toUpperCase())}
           />
 
           <input
-            className="w-full border rounded-lg p-3"
+            className="w-full border rounded-lg p-3 lowercase placeholder:normal-case"
             placeholder="Component (gag / env / pol)"
             value={component}
-            onChange={(e) => setComponent(e.target.value)}
+            onChange={(e) => setComponent(e.target.value.toLowerCase())}
           />
 
         </div>
